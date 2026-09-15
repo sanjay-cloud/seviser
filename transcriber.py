@@ -6,7 +6,7 @@ import os
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 import json
 
-class transcriber:
+class Transcriber:
 
     def __init__(self, model, processor, input_folder, output_folder, output_format = ".json"):
         self.model = model
@@ -66,7 +66,7 @@ class transcriber:
         data["filename"] = file_name
         matches = re.findall(self.pattern,text)
         segments = [{
-                "segment_id":int(id),
+                "id":int(id),
                 "start":float(start),
                 "text":text.strip(),
                 "end":float(end)
@@ -90,5 +90,5 @@ if __name__ == "__main__":
     model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3-turbo").to("cuda")
     processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3-turbo")          
     model.eval()
-    transcriber = transcriber(model=model, processor=processor, input_folder=input_folder, output_folder="transcriptions")
+    transcriber = Transcriber(model=model, processor=processor, input_folder=input_folder, output_folder="transcriptions")
     transcriber.transcribe()

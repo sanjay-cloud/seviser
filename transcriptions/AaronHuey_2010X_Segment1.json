@@ -1,0 +1,23 @@
+{
+    "filename": "AaronHuey_2010X_Segment1.wav",
+    "segments": [
+        {
+            "id": 0,
+            "start": 0.0,
+            "text": "I'm here today to show my photographs of the Lakota.",
+            "end": 3.7
+        },
+        {
+            "id": 1,
+            "start": 3.7,
+            "text": "How many of you may have heard of the Lakota,",
+            "end": 5.86
+        },
+        {
+            "id": 2,
+            "start": 5.86,
+            "text": "or at least the larger group of tribes called",
+            "end": 8.04
+        }
+    ]
+}
