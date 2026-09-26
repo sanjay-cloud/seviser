@@ -4,30 +4,34 @@ import numpy as np
 from pathlib import Path
 import os
 import json
-
+import utils.file_utils as file_utils
+import utils.json_utils as json_utils
 class Chunkers:
     def __init__(self, input_folder, output_folder, output_format = ".json", chunking_type = None, chunk_size = 10, embedding_model = None, num_clusters = 3):
-        self.input_folder = input_folder
-        self.output_folder = output_folder
+        self.input_folder = Path(input_folder)
+        self.output_folder = Path(output_folder)
         self.output_format = output_format
         self.chunk_size = chunk_size
         self.embedding_model = embedding_model
         self.num_clusters = num_clusters
-        self.chunking_type = self.segment_chunking        
-        self.create_dir()
+        self.supported_formats = [".json"]
+        self.chunking_type = self.segment_chunking  
+        file_utils.create_dir(self.output_folder)
 
     def start(self):
         folder = Path(self.input_folder)
-        for file in folder.iterdir():
-            if file.is_file():
-                file_name = file.name
-                with open(file,'r') as f:
+        
+        for file_path in folder.iterdir():
+            if file_path.is_file() and Path(file_path).suffix in self.supported_formats:
+                chunk_path = file_utils.change_file_extension(file_path.name, self.output_format, self.output_folder)
+                if chunk_path.is_file():
+                    continue
+                file_name = file_path.name
+                with open(file_path,'r') as f:
                     data = self.chunking_type(json.load(f))
-                    extension = Path(file_name).suffix
-                    file_name = file_name.replace(extension, self.output_format)        
-                    with open(Path(self.output_folder) / file_name,"w", encoding="utf-8") as json_file:
-                        json.dump(data, json_file)
-
+                    file_name = file_utils.change_file_extension(file_name=file_name, extension=self.output_format, output_folder=self.output_folder) 
+                    json_utils.save_json(json_file=file_name, json_data=data)  
+    
     def segment_chunking(self, data):
         data["chunking_strategy"] = "no_chunking"
         data["chunks"] = []
@@ -54,12 +58,7 @@ class Chunkers:
              clusters[label].append(sentences[i])
 
         return clusters  
-
-    def create_dir(self):
-        currentPath = os.getcwd()
-        
-        if not os.path.exists(Path(currentPath) / self.output_folder):
-            os.makedirs(self.output_folder)     
+  
 
 if __name__ == "__main__":
     chunker = Chunkers(input_folder="transcriptions", output_folder="chunks")
