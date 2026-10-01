@@ -3,6 +3,8 @@ datasets/
 chunks/
 transcripts/
 demos/
+data/
+experiments/
 # Python virtual environments
 .venv/
 venv/

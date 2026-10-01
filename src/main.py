@@ -7,8 +7,9 @@ from retrieval.embedder import Embedder
 from retrieval.indexer import Indexer
 from retrieval.retriever import Retriever
 from sentence_transformers import SentenceTransformer
-from huggingface_hub.utils import logging as hf_logging
-from transformers.utils import logging as transformers_logging
+# from huggingface_hub.utils import logging as hf_logging
+# from transformers.utils import logging as transformers_logging
+ 
 
 # def get_matched_data(self, sims):
 #     matched_data = []
@@ -38,26 +39,32 @@ from transformers.utils import logging as transformers_logging
 #         print("================================")   
 
 if __name__ == "__main__":
-    input_folder = "datasets/archive/train/wav"
+    input_folder = "data/audio/archive/train/wav"
     # model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3-turbo").to("cuda")
     # processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3-turbo")  
-    # transcriber = Transcriber(model=model, processor=processor, input_folder=input_folder, output_folder="transcripts", device= "cuda")
+    # transcriber = Transcriber(model=model, processor=processor, input_folder=input_folder, output_folder="data/transcripts", device= "cuda")
     # transcriber.transcribe_directory()
-    chunker = Chunkers(input_folder="transcripts", output_folder="chunks")
-    chunker.start()
+    # chunker = Chunkers(input_folder="data/transcripts", output_folder="data/chunks")
+    # chunker.start()
 
-    hf_logging.set_verbosity_error()
-    transformers_logging.set_verbosity_error()
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2" )
 
-    # embedder = Embedder(input_folder="chunks", embed_model=model) 
-    # embedder.build_index()
-    # matched_data = embedder.search(query="Where were images of the coach's trainees displayed?", top_k=3)
-    # print(matched_data)
+    # # embedder = Embedder(input_folder="chunks", embed_model=model) 
+    # # embedder.build_index()
+    # # matched_data = embedder.search(query="Where were images of the coach's trainees displayed?", top_k=3)
+    # # print(matched_data)
 
     embedder = Embedder(embed_model=model) 
-    indexer = Indexer(embedder=embedder, input_folder="chunks")
+    indexer = Indexer(embedder=embedder, input_folder="data/chunks", metadata_file = "artifacts/metadata.json", index_path = "artifacts/index.faiss")
     indexer.build_index()
-    retriever = Retriever(embedder=embedder, index=indexer.index)
+    retriever = Retriever(embedder=embedder,metadata_file = "artifacts/metadata.json", index_path = "artifacts/index.faiss")
     matched_data = retriever.search(query="Where were images of the coach's trainees displayed?", top_k=3)
     print(matched_data)
+    # # data = matched_data[0]
+    # # print(data["filename"])
+    # # song = vlc.MediaPlayer(f'{input_folder}/{data["filename"]}')
+    # # song = vlc.MediaPlayer(f'{input_folder}/AimeeMullins_1998_Segment20.wav')
+    # # song.play()
+
+    # # input("Press Enter to stop playback...")
+    # # song.stop()

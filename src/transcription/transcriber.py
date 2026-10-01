@@ -82,8 +82,9 @@ class Transcriber:
 
             }for segment_id, (start, segment_text, end) in enumerate(timestamp_matches)
         ]
-        
+        whole_text = "".join([segment["segment_text"] for segment in segments])
         transcription_data["segments"] = segments
+        transcription_data["whole_text"] = whole_text
         return transcription_data
             
        

@@ -1,16 +1,18 @@
 from pathlib import Path
-import utils.json_utils as json_utils
+# import utils.json_utils as json_utils
+from src.utils import json_utils
 import json
 import faiss
 import numpy as np
 
 class Indexer:
-    def __init__(self, embedder, input_folder, metadata_file = "metadata.json"):
+    def __init__(self, embedder, input_folder, metadata_file = "metadata.json", index_path = "index.faiss"):
         
         self.embedder = embedder
         self.input_folder = Path(input_folder)
         self.index = None
-        self.metadata_file = metadata_file
+        self.metadata_file = metadata_file        
+        self.index_path = index_path
         self.metadata = []
         self.texts = []
 
@@ -19,7 +21,7 @@ class Indexer:
         json_utils.save_json(self.metadata_file, self.metadata)
         
         self.create_index()
-        print(f"seaching across {len(self.metadata)} trnscript chunks")
+        faiss.write_index(self.index, self.index_path)
     
     
     def prepare_data(self):
