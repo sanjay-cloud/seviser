@@ -108,7 +108,7 @@ semantic-video-search/
 1. Clone the repository:
 
    ```bash
-   git clone <YOUR_REPOSITORY_URL>
+   git clone https://github.com/sanjay-cloud/seviser.git
    cd semantic-video-search
    ```
 
